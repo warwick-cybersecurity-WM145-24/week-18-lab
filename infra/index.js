@@ -73,14 +73,6 @@ let ami = aws.ec2
   )
   .then((result) => result.id);
 
-// create a new security group for port 80
-let group = new aws.ec2.SecurityGroup("web-secgrp", {
-  ingress: [
-    { protocol: "tcp", fromPort: 22, toPort: 22, cidrBlocks: ["0.0.0.0/0"] },
-    { protocol: "tcp", fromPort: 80, toPort: 80, cidrBlocks: ["0.0.0.0/0"] },
-  ],
-});
-
 // (optional) create a simple web server using the startup script for the instance
 const userData = `#!/bin/bash
 echo "Hello, World!" > index.html
@@ -90,7 +82,7 @@ const server = new aws.ec2.Instance("web-server-www", {
   tags: { Name: "web-server-www" },
   instanceType: instanceSize,
   subnetId: subnet.id,
-  vpcSecurityGroupIds: [group.id], // reference the group object above
+  vpcSecurityGroupIds: [securityGroup.id], // reference the group object above
   ami: ami,
   userData: userData, // start a simple web server
 });
