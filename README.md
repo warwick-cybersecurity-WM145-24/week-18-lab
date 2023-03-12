@@ -8,9 +8,16 @@ Around cloud security
 # ensure AWS creds are exported to current env
 
 # also export this bucket name
-export STATE_BUCKET_NAME="WM145-24-jujhar-pulumi-state-store"
-# create s3 state store bucket
+# shove in the aws account id to make it globally unique
+export PULUMI_STATE_BUCKET_NAME="jujhar-$(aws sts get-caller-identity --query Account --output text)-pulumi-state-store"
+
+# create Pulumi s3 state store bucket to store the state in
 aws s3api create-bucket \
-  --bucket "${STATE_BUCKET_NAME}"
+  --bucket "${PULUMI_STATE_BUCKET_NAME}" \
+  --region eu-west-1 \
+  --create-bucket-configuration LocationConstraint=eu-west-1
+
+# tell Pulumi you're using this bucket as your state store
+pulumi login s3://"${PULUMI_STATE_BUCKET_NAME}"
 
 ```
