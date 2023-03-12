@@ -1,6 +1,8 @@
 const pulumi = require("@pulumi/pulumi");
 const aws = require("@pulumi/aws");
 
+const instanceSize = "t3.micro";
+
 // Create a VPC.
 const vpc = new aws.ec2.Vpc("vpc", {
   cidrBlock: "10.0.0.0/22",
@@ -70,7 +72,7 @@ let ami = aws.ec2
     },
     { async: true }
   )
-  .then((result) => result);
+  .then((result) => result.id);
 
 // create a super simple web server using the startup script for the instance
 const userDataScript = `#!/bin/bash
@@ -82,7 +84,7 @@ const instance = new aws.ec2.Instance("web-server-www", {
   instanceType: instanceSize,
   subnetId: subnet.id,
   vpcSecurityGroupIds: [securityGroup.id], // reference the group object above
-  ami: ami.id,
+  ami: ami,
   userData: userDataScript, // start a simple web server
 });
 

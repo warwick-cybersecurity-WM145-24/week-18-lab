@@ -1,8 +1,25 @@
 # Week 18 labs
 
-Around cloud security
+AWS Cloud security
+
+- introducing Pulumi (as an alternative to Cloudformation)
+- AWS Security Hub
+- AWS Macie
+- AWS Prowler
 
 ## Getting started
+
+We're going to deploy an insecure application to AWS
+
+### Install Pulumi
+
+```bash
+# install pulumi and then start a new terminal
+# see https://www.pulumi.com/docs/get-started/aws/begin/
+curl -fsSL https://get.pulumi.com | sh
+```
+
+### Deploy the insecure stack
 
 ```bash
 # ensure AWS creds are exported to current env
@@ -19,5 +36,11 @@ aws s3api create-bucket \
 
 # tell Pulumi you're using this bucket as your state store
 pulumi login s3://"${PULUMI_STATE_BUCKET_NAME}"
+
+# install node deps
+(cd infra && npm i)
+
+# Deploy stack
+(cd infra && pulumi up)
 
 ```
