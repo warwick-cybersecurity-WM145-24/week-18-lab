@@ -43,4 +43,6 @@ pulumi login s3://"${PULUMI_STATE_BUCKET_NAME}"
 # Deploy stack
 (cd infra && pulumi up)
 
+# destroy stack
+(cd infra && pulumi down)
 ```

@@ -40,6 +40,38 @@ const routeTableAssociation = new aws.ec2.RouteTableAssociation(
   }
 );
 
+/**
+ * create a policy so that our instance can inherit those permissions
+ */
+const instancePolicy = {
+  Version: "2012-10-17",
+  Statement: [
+    {
+      Action: "sts:AssumeRole",
+      Principal: {
+        Service: "ec2.amazonaws.com",
+      },
+      Effect: "Allow",
+      Sid: "",
+    },
+  ],
+};
+const role = new aws.iam.Role("custom-ec2-instance-role", {
+  assumeRolePolicy: instancePolicy,
+  path: "/",
+});
+// attach SSM permissions to this policy
+const rolePolicyAttachment = new aws.iam.RolePolicyAttachment("attach-me", {
+  policyArn: "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore",
+  role,
+});
+const iamInstanceProfile = new aws.iam.InstanceProfile(
+  "custom-instance-profile",
+  {
+    role,
+  }
+);
+
 // Create a security group allowing inbound access over port 80 and outbound
 // access to anywhere.
 const securityGroup = new aws.ec2.SecurityGroup("security-group", {
@@ -86,6 +118,7 @@ const instance = new aws.ec2.Instance("web-server-www", {
   vpcSecurityGroupIds: [securityGroup.id], // reference the group object above
   ami: ami,
   userData: userDataScript, // start a simple web server
+  iamInstanceProfile, // attach our instance profile to this instance
 });
 
 // Export the instance's details
