@@ -8,9 +8,8 @@ AWS Cloud security lab
 
 ## Todo
 
-- [ ] ClickOps AWS Security Hub on your account
-- [ ] Install AWS Prowler
-- [ ] Install Pulumi
+- [x] Install AWS Prowler
+- [x] Install Pulumi
 - [ ] Deploy stack
 - [ ] Run Prowler on ec2
 - [ ] Fix script to reduce number of Prowler and AWS Security hub alerts
